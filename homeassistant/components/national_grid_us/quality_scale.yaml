@@ -52,10 +52,10 @@ rules:
   diagnostics: todo
   discovery:
     status: exempt
-    comment: The meters communicate with National Grid's cloud service through its private mesh network and are not connected to the user's local network.
+    comment: The meters report to National Grid over the utility's own private network and never appear on the user's network, so there is nothing to discover. Accounts are linked through the user's National Grid login.
   discovery-update-info:
     status: exempt
-    comment: The meters communicate with National Grid's cloud service through its private mesh network and are not connected to the user's local network.
+    comment: The meters report to National Grid over the utility's own private network and never appear on the user's network, so there is nothing to discover. Accounts are linked through the user's National Grid login.
   docs-data-update: todo
   docs-examples: todo
   docs-known-limitations: todo

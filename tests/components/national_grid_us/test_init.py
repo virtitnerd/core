@@ -8,7 +8,12 @@ import pytest
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 
-from .conftest import ENTITY_ELECTRIC_COST, ENTITY_ELECTRIC_USAGE, make_api_mock
+from .conftest import (
+    ENTITY_ELECTRIC_COST,
+    ENTITY_ELECTRIC_USAGE,
+    ENTITY_GAS_USAGE,
+    make_api_mock,
+)
 
 from tests.common import MockConfigEntry
 
@@ -102,7 +107,7 @@ async def test_sensor_api_errors(
     method: str,
     entity_id: str,
 ) -> None:
-    """Test sensors handle usage and cost API errors gracefully."""
+    """Test usage and cost API errors make the entry retry setup."""
     api = make_api_mock()
     getattr(api, method).side_effect = CannotConnectError("Timeout")
 
@@ -110,10 +115,27 @@ async def test_sensor_api_errors(
         await hass.config_entries.async_setup(mock_config_entry.entry_id)
         await hass.async_block_till_done()
 
+    assert mock_config_entry.state is ConfigEntryState.SETUP_RETRY
+    assert hass.states.get(entity_id) is None
+
+
+async def test_meter_without_service_point_is_skipped(
+    hass: HomeAssistant,
+    mock_config_entry: MockConfigEntry,
+) -> None:
+    """Test a meter with a null service point does not create entities."""
+    api = make_api_mock()
+    api.get_billing_account.return_value["meter"]["nodes"][1]["servicePointNumber"] = (
+        None
+    )
+
+    with patch(PATCH_CLIENT, return_value=api):
+        await hass.config_entries.async_setup(mock_config_entry.entry_id)
+        await hass.async_block_till_done()
+
     assert mock_config_entry.state is ConfigEntryState.LOADED
-    state = hass.states.get(entity_id)
-    assert state is not None
-    assert state.state == "unknown"
+    assert hass.states.get(ENTITY_ELECTRIC_USAGE) is not None
+    assert hass.states.get(ENTITY_GAS_USAGE) is None
 
 
 async def test_sensor_without_region_skips_cost_fetch(

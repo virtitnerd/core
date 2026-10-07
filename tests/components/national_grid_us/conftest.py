@@ -76,7 +76,7 @@ def mock_usages() -> list[dict]:
     """Return mock energy usages."""
     return [
         {"usageType": "TOTAL_KWH", "usageYearMonth": 202501, "usage": 500.0},
-        {"usageType": "CCF", "usageYearMonth": 202501, "usage": 30.0},
+        {"usageType": "THERMS", "usageYearMonth": 202501, "usage": 30.0},
     ]
 
 

@@ -9,7 +9,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
 )
-from homeassistant.const import UnitOfEnergy, UnitOfVolume
+from homeassistant.const import UnitOfEnergy
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
@@ -36,14 +36,12 @@ class NationalGridSensorEntityDescription(SensorEntityDescription):
 def _get_energy_unit(meter_data: MeterData) -> str:
     """Get the appropriate energy unit based on fuel type."""
     if meter_data.meter["fuelType"].upper() == "GAS":
-        return UnitOfVolume.CENTUM_CUBIC_FEET
+        return UnitOfEnergy.THERM
     return UnitOfEnergy.KILO_WATT_HOUR
 
 
-def _get_energy_device_class(meter_data: MeterData) -> SensorDeviceClass:
+def _get_energy_device_class(_meter_data: MeterData) -> SensorDeviceClass:
     """Get the device class based on fuel type."""
-    if meter_data.meter["fuelType"].upper() == "GAS":
-        return SensorDeviceClass.GAS
     return SensorDeviceClass.ENERGY
 
 

@@ -49,10 +49,11 @@ async def test_sensor_entities_created(
     assert state is not None
     assert float(state.state) == 120.5
 
-    # Gas meter - usage (CCF converted to m³ by HA)
+    # Gas meter - usage (the API reports gas in therms)
     state = hass.states.get(ENTITY_GAS_USAGE)
     assert state is not None
-    assert float(state.state) > 0
+    assert float(state.state) == 30.0
+    assert state.attributes["unit_of_measurement"] == "thm"
 
     # Gas meter - cost
     state = hass.states.get(ENTITY_GAS_COST)
