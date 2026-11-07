@@ -194,7 +194,7 @@ async def test_first_import_backfills_all_history(
     mock_national_grid_api.get_ami_energy_usages.reset_mock()
     freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     await async_wait_recording_done(hass)
 
     later = [
@@ -242,7 +242,7 @@ async def test_statistics_sum_continues_across_refreshes(
     ]
     freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
 
     usage_id = statistic_id(ELECTRIC_KEY)
     assert (await _async_sums(hass, usage_id))[usage_id] == [1.0, 3.0]
@@ -268,7 +268,7 @@ async def test_reimporting_the_same_window_is_idempotent(
 
     freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
 
     usage_id = statistic_id(ELECTRIC_KEY)
     assert (await _async_sums(hass, usage_id))[usage_id] == [1.0, 3.0]
