@@ -192,7 +192,7 @@ async def test_first_import_backfills_all_history(
     assert first.count(date(1970, 1, 1)) == 2
 
     mock_national_grid_api.get_ami_energy_usages.reset_mock()
-    freezer.tick(timedelta(hours=1))
+    freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
     await async_wait_recording_done(hass)
@@ -240,7 +240,7 @@ async def test_statistics_sum_continues_across_refreshes(
     mock_national_grid_api.get_ami_energy_usages_15min.return_value = [
         {"date": "2025-01-15T11:00:00.000Z", "quantity": 2.0},
     ]
-    freezer.tick(timedelta(hours=1))
+    freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
 
@@ -266,7 +266,7 @@ async def test_reimporting_the_same_window_is_idempotent(
     await hass.async_block_till_done()
     await async_wait_recording_done(hass)
 
-    freezer.tick(timedelta(hours=1))
+    freezer.tick(timedelta(hours=1, seconds=1))
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
 
